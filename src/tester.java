@@ -6,11 +6,11 @@ public class tester {
         idoTest();
     }
 
-    public void idoTest(){
+    public static void idoTest(){
 
     }
 
-    public void asafTest(){
+    public static void asafTest(){
 
     }
 
