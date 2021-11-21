@@ -39,8 +39,15 @@ public class AVLTree {
 
 	  return "searchDefaultString";  // to be replaced by student code
   }
+	/**
+	 * Ido wrote this function for insert and delete
+	 * the function rebalances the tree and returns the count of operations
+	 */
+	public int reBalance(AVLTree t){
 
-  /**
+	}
+
+	/**
    * public int insert(int k, String i)
    *
    * Inserts an item with key k and info i to the AVL tree.
@@ -55,7 +62,43 @@ public class AVLTree {
 
 	   return 420;	// to be replaced by student code
    }
+	/**
+	 * Ido wrote this function for delete
+	 * find the successor of node
+	 */
+	public IAVLNode successor(IAVLNode node){
+		if(node.getRight() != null){
+			IAVLNode left_subtree = node.getRight();
+			while(left_subtree.getLeft() != null){
+				left_subtree = left_subtree.getLeft();
+			}
+			return left_subtree;
+		}
+		else{
+			IAVLNode parent = node.getParent();
+			while(parent != null && node == parent.getRight()){ // if parent is not empty node and we can continue to search
+				node = parent;
+				parent = node.getParent();
+			}
+			return parent;
 
+		}
+	}
+	/**
+	 * Ido wrote this function for delete
+	 * return the node of key k
+	 */
+	public IAVLNode getNode(int k){
+
+	}
+	public boolean isLeaf(IAVLNode node){
+		if(node.getLeft() == null && node.getRight() == null)
+			return true;
+		return false;
+	}
+	public int difference(IAVLNode node1, IAVLNode node2){
+		return node1.getHeight() - node2.getHeight();
+	}
   /**
    * public int delete(int k)
    *
@@ -66,9 +109,19 @@ public class AVLTree {
    * Returns -1 if an item with key k was not found in the tree.
    */
    public int delete(int k) {
+	   if(this.search(k) == null || k < 0)
+		   return -1;
+	   IAVLNode del_node = getNode(k);
+	   if(isLeaf(del_node)){ // leaf
+		   IAVLNode parent = del_node.getParent();
+		   if(difference(parent, parent.getLeft()) == 1 && difference(parent, parent.getRight()) == 1) // difference of rank: 1 1
+			   del_node.setNoRealNode();
+		   else{ // difference of rank: 1 2 || 2 1
 
+		   }
 
-	   // IDO
+	   }
+
 
 	   return 421;	// to be replaced by student code
    }
@@ -81,7 +134,7 @@ public class AVLTree {
     */
    public String min() {
 
-	   // ASAF
+	   // IDO
 
 
 	   return "minDefaultString"; // to be replaced by student code
@@ -196,6 +249,7 @@ public class AVLTree {
 		public boolean isRealNode(); // Returns True if this is a non-virtual AVL node.
     	public void setHeight(int height); // Sets the height of the node.
     	public int getHeight(); // Returns the height of the node (-1 for virtual nodes).
+		public void setNoRealNode(); // Ido wrote = Sets virtual AVL node.
 	}
 
    /** 
@@ -209,39 +263,39 @@ public class AVLTree {
   public class AVLNode implements IAVLNode{
 	  private int key, rank;
 	  private String info;
-	  private AVLNode left, right;
+	  private AVLNode left,parent, right;
 
 		public int getKey()
 		{
-			return 423; // to be replaced by student code
+			return this.key; // to be replaced by student code
 		}
 		public String getValue()
 		{
-			return "getValueDefault"; // to be replaced by student code
+			return this.info; // to be replaced by student code
 		}
 		public void setLeft(IAVLNode node)
 		{
-			return; // to be replaced by student code
+			this.left = (AVLNode) node; // to be replaced by student code
 		}
 		public IAVLNode getLeft()
 		{
-			return null; // to be replaced by student code
+			return this.left; // to be replaced by student code
 		}
 		public void setRight(IAVLNode node)
 		{
-			return; // to be replaced by student code
+			this.right = (AVLNode) node; // to be replaced by student code
 		}
 		public IAVLNode getRight()
 		{
-			return null; // to be replaced by student code
+			return this.right; // to be replaced by student code
 		}
 		public void setParent(IAVLNode node)
 		{
-			return; // to be replaced by student code
+			this.parent = (AVLNode) node;  // to be replaced by student code
 		}
 		public IAVLNode getParent()
 		{
-			return null; // to be replaced by student code
+			return this.parent; // to be replaced by student code
 		}
 		public boolean isRealNode()
 		{
@@ -249,12 +303,20 @@ public class AVLTree {
 		}
 	    public void setHeight(int height)
 	    {
-	      return; // to be replaced by student code
+	      this.rank = height; // to be replaced by student code
 	    }
 	    public int getHeight()
 	    {
-	      return 424; // to be replaced by student code
+	      return this.rank; // to be replaced by student code
 	    }
+		public void setNoRealNode(){
+			this.key = -1;
+			this.info = null;
+			this.setLeft(null);
+			this.setParent(null);
+			this.setRight(null);
+			this.setHeight(-1);
+		}
   }
 
 }
