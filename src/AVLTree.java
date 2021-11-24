@@ -45,6 +45,8 @@ public class AVLTree {
 	 */
 	public int reBalance(AVLTree t){
 
+
+		return 0;
 	}
 
 	/**
@@ -90,6 +92,7 @@ public class AVLTree {
 	 */
 	public IAVLNode getNode(int k){
 
+		return null;
 	}
 	public boolean isLeaf(IAVLNode node){
 		if(node.getLeft() == null && node.getRight() == null)
