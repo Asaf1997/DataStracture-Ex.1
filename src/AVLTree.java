@@ -39,6 +39,7 @@ public class AVLTree {
 	  AVLNode a = getNode(k);
 	  return a != null ? a.info : null;
   }
+
 	public IAVLNode rotateLeft(IAVLNode t){
 		IAVLNode A = t.getLeft();
 		IAVLNode B = t.getRight().getLeft();
@@ -51,6 +52,7 @@ public class AVLTree {
 		B.setParent(t);
 		return newroot;
 	}
+
 	public IAVLNode rotateRight(IAVLNode node){
 		IAVLNode newRoot = node.getLeft();
 		newRoot.setParent(node.getParent());
@@ -58,21 +60,31 @@ public class AVLTree {
 		node.setLeft(newRoot.getRight());
 		node.getLeft().setParent(node);
 		newRoot.setRight(node);
+
+		if (newRoot.getParent().getKey() < newRoot.getKey()){ newRoot.getParent().setRight(newRoot); }
+		else { newRoot.getParent().setLeft(newRoot); }
+
 		return newRoot;
 	}
-	public void demote(IAVLNode node){
-		node.setHeight(node.getHeight() - 1);
-	}
-	public void promote(IAVLNode node){
-		node.setHeight(node.getHeight() + 1);
-	}
+
 	/**
 	 * Ido wrote this function for insert and delete
 	 * the function rebalances the tree and returns the count of operations
 	 */
 	public int reBalance(AVLNode t){
+		int counter = 0;
+		while (t != null){
+			int leftDiff = t.getLeftDiff();
+			int rightDiff = t.getRightDiff();
+			if (leftDiff == 0 && rightDiff == 0 || leftDiff == 0 && rightDiff == 1 || leftDiff == 1 && rightDiff == 0){
+				t.promote();
+			}
+			else if (leftDiff == 0 && rightDiff == 2){
+				counter ++;
 
-		return 0;
+			}
+
+		}
 	}
 
 	/**
@@ -110,12 +122,6 @@ public class AVLTree {
 			}
 			return parent;
 		}
-	}
-
-	// By asaf
-	public boolean isLeaf(IAVLNode node){
-		if(node.getLeft().getKey() == -1 && node.getRight().getKey() == -1){return true;}
-		return false;
 	}
 
 	public int difference(IAVLNode node1, IAVLNode node2){
@@ -182,7 +188,7 @@ public class AVLTree {
    public String max() {
 	   if(this.size == 0){ return null; }
 	   AVLNode curr = this.root;
-	   while (curr.right.key != -1){
+	   while (curr.right.rank != -1){
 			curr = curr.right;
 	   }
 	   return curr.info;
@@ -308,54 +314,78 @@ public class AVLTree {
 	  	public AVLNode(int key, String info){
 			  this.info = info;
 			  this.key = key;
+			  this.rank = 0;
 			  this.left = new AVLNode(this);
 			  this.right = new AVLNode(this);
 		}
 
 		public int getKey()
 		{
-			return this.key; // to be replaced by student code
+			return this.key;
 		}
 		public String getValue()
 		{
-			return this.info; // to be replaced by student code
+			return this.info;
 		}
 		public void setLeft(IAVLNode node)
 		{
-			this.left = (AVLNode) node; // to be replaced by student code
+			this.left = (AVLNode) node;
 		}
 		public IAVLNode getLeft()
 		{
-			return this.left; // to be replaced by student code
+			return this.left;
 		}
 		public void setRight(IAVLNode node)
 		{
-			this.right = (AVLNode) node; // to be replaced by student code
+			this.right = (AVLNode) node;
 		}
 		public IAVLNode getRight()
 		{
-			return this.right; // to be replaced by student code
+			return this.right;
 		}
 		public void setParent(IAVLNode node)
 		{
-			this.parent = (AVLNode) node;  // to be replaced by student code
+			this.parent = (AVLNode) node;
 		}
 		public IAVLNode getParent()
 		{
-			return this.parent; // to be replaced by student code
+			return this.parent;
 		}
 		public boolean isRealNode()
 		{
-			return true; // to be replaced by student code
+			return this.rank != -1;
 		}
 	    public void setHeight(int height)
 	    {
-	      this.rank = height; // to be replaced by student code
+	      this.rank = height;
 	    }
 	    public int getHeight()
 	    {
-	      return this.rank; // to be replaced by student code
+	      return this.rank;
 	    }
+		public int getLeftDiff(){
+			  return this.rank - this.left.rank;
+		}
+
+	   public int getRightDiff(){
+		   return this.rank - this.left.rank;
+	   }
+
+	   public boolean isLeaf(){
+			  return this.left.rank == -1 && this.right.rank == -1;
+	   }
+
+	   public int isUnary(){
+			  return 0;
+	   }
+
+	   public void promote(){
+			  this.rank += 1;
+	   }
+
+	   public void demote(){
+			  this.rank -= 1;
+	   }
   }
 }
   
