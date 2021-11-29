@@ -14,6 +14,11 @@ public class AVLTree {
 	private AVLNode root;
 	private int size;
 
+	public AVLTree(){
+		this.size = 0;
+		this.root = null;
+	}
+
   /**
    * public boolean empty()
    *
@@ -21,30 +26,25 @@ public class AVLTree {
    *
    */
   public boolean empty() {
-
-	  // ASAF
-
-	  return false; // to be replaced by student code
+	  return this.size == 0;
   }
 
  /**
    * public String search(int k)
-   *
+   * Wrote by Asaf
    * Returns the info of an item with key k if it exists in the tree.
    * otherwise, returns null.
    */
   public String search(int k) {
-
-	  // ASAF
-
-	  return "searchDefaultString";  // to be replaced by student code
+	  AVLNode a = getNode(k);
+	  return a != null ? a.info : null;
   }
+
 	/**
 	 * Ido wrote this function for insert and delete
 	 * the function rebalances the tree and returns the count of operations
 	 */
-	public int reBalance(AVLTree t){
-
+	public int reBalance(AVLNode t){
 
 		return 0;
 	}
@@ -78,30 +78,33 @@ public class AVLTree {
 		}
 		else{
 			IAVLNode parent = node.getParent();
-			while(parent != null && node == parent.getRight()){ // if parent is not empty node and we can continue to search
+			while(parent != null && node == parent.getRight()){ // if parent is not empty node, and we can continue to search
 				node = parent;
 				parent = node.getParent();
 			}
 			return parent;
-
 		}
 	}
-	/**
-	 * Ido wrote this function for delete
-	 * return the node of key k
-	 */
-	public IAVLNode getNode(int k){
 
-		return null;
-	}
+	// By asaf
 	public boolean isLeaf(IAVLNode node){
-		if(node.getLeft() == null && node.getRight() == null)
-			return true;
+		if(node.getLeft().getKey() == -1 && node.getRight().getKey() == -1){return true;}
 		return false;
 	}
+
 	public int difference(IAVLNode node1, IAVLNode node2){
 		return node1.getHeight() - node2.getHeight();
 	}
+
+	private AVLNode getNode(int k){
+		AVLNode curr = this.root;
+		while (curr.key != -1){
+			if (curr.key == k){ return curr; }
+			curr = curr.key < k ? curr.right : curr.left ;
+		}
+		return null;
+	}
+
   /**
    * public int delete(int k)
    *
@@ -114,7 +117,7 @@ public class AVLTree {
    public int delete(int k) {
 	   if(this.search(k) == null || k < 0)
 		   return -1;
-	   IAVLNode del_node = getNode(k);
+	   IAVLNode del_node = search(k);
 	   if(isLeaf(del_node)){ // leaf
 		   IAVLNode parent = del_node.getParent();
 		   if(difference(parent, parent.getLeft()) == 1 && difference(parent, parent.getRight()) == 1) // difference of rank: 1 1
@@ -145,15 +148,18 @@ public class AVLTree {
 
    /**
     * public String max()
-    *
+    * Wrote by Asaf
+	*
     * Returns the info of the item with the largest key in the tree,
     * or null if the tree is empty.
     */
    public String max() {
-
-	   // ASAF
-
-	   return "maxDefaultString"; // to be replaced by student code
+	   if(this.size == 0){ return null; }
+	   AVLNode curr = this.root;
+	   while (curr.right.key != -1){
+			curr = curr.right;
+	   }
+	   return curr.info;
    }
 
   /**
@@ -163,10 +169,9 @@ public class AVLTree {
    * or an empty array if the tree is empty.
    */
   public int[] keysToArray() {
+	  int[] keys = new int[this.size];
 
-	  //ASAF
-
-        return new int[33]; // to be replaced by student code
+	  return null;
   }
 
   /**
@@ -252,7 +257,6 @@ public class AVLTree {
 		public boolean isRealNode(); // Returns True if this is a non-virtual AVL node.
     	public void setHeight(int height); // Sets the height of the node.
     	public int getHeight(); // Returns the height of the node (-1 for virtual nodes).
-		public void setNoRealNode(); // Ido wrote = Sets virtual AVL node.
 	}
 
    /** 
@@ -266,7 +270,19 @@ public class AVLTree {
   public class AVLNode implements IAVLNode{
 	  private int key, rank;
 	  private String info;
-	  private AVLNode left,parent, right;
+	  private AVLNode left, parent, right;
+
+	  	private AVLNode(){
+			  this.key = -1;
+			  this.info = null;
+		}
+
+	  	public AVLNode(int key, String info){
+			  this.info = info;
+			  this.key = key;
+			  this.left = new AVLLeafSons();
+			  this.right = new AVLLeafSons();
+		}
 
 		public int getKey()
 		{
@@ -312,15 +328,13 @@ public class AVLTree {
 	    {
 	      return this.rank; // to be replaced by student code
 	    }
-		public void setNoRealNode(){
-			this.key = -1;
-			this.info = null;
-			this.setLeft(null);
-			this.setParent(null);
-			this.setRight(null);
-			this.setHeight(-1);
-		}
   }
+	private class AVLLeafSons extends AVLNode{
+		public AVLLeafSons() {
+			super();
+		}
+	}
+
 
 }
   
