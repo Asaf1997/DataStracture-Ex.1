@@ -50,6 +50,8 @@ public class AVLTree {
 		t.setRight(B);
 		A.setParent(t);
 		B.setParent(t);
+		if(newroot.getParent().getKey() < newroot.getKey()) { newroot.getParent().setRight(newroot); }
+		else { newroot.getParent().setLeft(newroot); }
 		return newroot;
 	}
 
@@ -128,11 +130,11 @@ public class AVLTree {
 		return node1.getHeight() - node2.getHeight();
 	}
 
-	private AVLNode getNode(int k){
-		AVLNode curr = this.root;
-		while (curr.key != -1){
-			if (curr.key == k){ return curr; }
-			curr = curr.key < k ? curr.right : curr.left ;
+	private IAVLNode getNode(int k){
+		IAVLNode curr = this.root;
+		while (curr.getKey() != -1){
+			if (curr.getKey() == k){ return curr; }
+			curr = curr.getKey() < k ? curr.getRight() : curr.getLeft() ;
 		}
 		return null;
 	}
@@ -149,18 +151,12 @@ public class AVLTree {
    public int delete(int k) {
 	   if(this.search(k) == null || k < 0)
 		   return -1;
-	   IAVLNode del_node = getNode(k);
-	   if(isLeaf(del_node)){ // leaf
-		   IAVLNode parent = del_node.getParent();
-		   if(difference(parent, parent.getLeft()) == 1 && difference(parent, parent.getRight()) == 1) // difference of rank: 1 1
-			 //  del_node.setNoRealNode();
-		   //else{ // difference of rank: 1 2 || 2 1
-
-		   //}
-
+	   IAVLNode node = getNode(k);
+	   IAVLNode parent = node.getParent();
+	   if(node.isLeaf()){
+		   node = new AVLNode((AVLNode)parent);
+		   return 0;
 	   }
-
-
 	   return 421;	// to be replaced by student code
    }
 
@@ -289,6 +285,12 @@ public class AVLTree {
 		public boolean isRealNode(); // Returns True if this is a non-virtual AVL node.
     	public void setHeight(int height); // Sets the height of the node.
     	public int getHeight(); // Returns the height of the node (-1 for virtual nodes).
+		public int getLeftDiff();
+		public int getRightDiff();
+		public boolean isLeaf();
+		public int isUnary();
+		public void promote();
+		public void demote();
 	}
 
    /** 
@@ -375,8 +377,10 @@ public class AVLTree {
 			  return this.left.rank == -1 && this.right.rank == -1;
 	   }
 
-	   public int isUnary(){
-			  return 0;
+	   public int isUnary(){ // 0 - left subtree, 1 - right subtree, else - (-1)
+			  if (this.left.rank == -1 && this.right.rank != -1) { return 0; }
+			  if (this.left.rank != -1 && this.right.rank == -1) { return 1; }
+			  else return -1;
 	   }
 
 	   public void promote(){
