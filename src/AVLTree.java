@@ -64,6 +64,18 @@ public class AVLTree {
 
 	   return 420;	// to be replaced by student code
    }
+	public IAVLNode rotateLeft(IAVLNode t){
+		IAVLNode A = t.getLeft();
+		IAVLNode B = t.getRight().getLeft();
+		IAVLNode newroot = t.getRight();
+		newroot.setParent(t.getParent());
+		t.setParent(newroot);
+		t.setLeft(A);
+		t.setRight(B);
+		A.setParent(t);
+		B.setParent(t);
+		return newroot;
+	}
 	/**
 	 * Ido wrote this function for delete
 	 * find the successor of node
