@@ -46,7 +46,16 @@ public class AVLTree {
 	 */
 	public int reBalance(AVLNode t){
 
-		return 0;
+	}
+
+	public IAVLNode rotateRight(IAVLNode node){
+		IAVLNode newRoot = node.getLeft();
+		newRoot.setParent(node.getParent());
+		node.setParent(newRoot);
+		node.setLeft(newRoot.getRight());
+		node.getLeft().setParent(node);
+		newRoot.setRight(node);
+		return newRoot;
 	}
 
 	/**
@@ -59,10 +68,7 @@ public class AVLTree {
    * Returns -1 if an item with key k already exists in the tree.
    */
    public int insert(int k, String i) {
-
-	   //ASAF
-
-	   return 420;	// to be replaced by student code
+	   return 0;
    }
 	/**
 	 * Ido wrote this function for delete
@@ -96,9 +102,10 @@ public class AVLTree {
 		return node1.getHeight() - node2.getHeight();
 	}
 
+
 	private AVLNode getNode(int k){
 		AVLNode curr = this.root;
-		while (curr.key != -1){
+		while (curr.rank != -1){
 			if (curr.key == k){ return curr; }
 			curr = curr.key < k ? curr.right : curr.left ;
 		}
@@ -329,7 +336,8 @@ public class AVLTree {
 	      return this.rank; // to be replaced by student code
 	    }
   }
-	private class AVLLeafSons extends AVLNode{
+
+  private class AVLLeafSons extends AVLNode{
 		public AVLLeafSons() {
 			super();
 		}
