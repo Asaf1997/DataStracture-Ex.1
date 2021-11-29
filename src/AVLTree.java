@@ -275,6 +275,7 @@ public class AVLTree {
 	  	private AVLNode(){
 			  this.key = -1;
 			  this.info = null;
+			  this.rank = -1;
 		}
 
 	  	public AVLNode(int key, String info){
