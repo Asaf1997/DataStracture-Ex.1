@@ -44,25 +44,7 @@ public class AVLTree {
 	 * Ido wrote this function for insert and delete
 	 * the function rebalances the tree and returns the count of operations
 	 */
-	public IAVLNode rotateLeft(IAVLNode t){
-		IAVLNode A = t.getLeft();
-		IAVLNode B = t.getRight().getLeft();
-		IAVLNode newroot = t.getRight();
-		newroot.setParent(t.getParent());
-		t.setParent(newroot);
-		t.setLeft(A);
-		t.setRight(B);
-		A.setParent(t);
-		B.setParent(t);
-		return newroot;
-	}
-	public void demote(IAVLNode node){
-		node.setHeight(node.getHeight() - 1);
-	}
-	public void promote(IAVLNode node){
-		node.setHeight(node.getHeight() + 1);
-	}
-	public int reBalance(IAVLNode t){
+	public int reBalance(AVLNode t){
 
 		return 0;
 	}
@@ -109,15 +91,6 @@ public class AVLTree {
 		if(node.getLeft().getKey() == -1 && node.getRight().getKey() == -1){return true;}
 		return false;
 	}
-	public int isUnary(IAVLNode node){
-		if((node.getLeft().getKey() == -1 && node.getRight().getKey() != -1) || (node.getLeft().getKey() != -1 && node.getRight().getKey() == -1)){
-			if(node.getLeft().getKey() != -1)
-				return 0; // left subtree
-			else
-				return 1; // right subtree
-		}
-		return -1; // node is not unary
-	}
 
 	public int difference(IAVLNode node1, IAVLNode node2){
 		return node1.getHeight() - node2.getHeight();
@@ -144,19 +117,19 @@ public class AVLTree {
    public int delete(int k) {
 	   if(this.search(k) == null || k < 0)
 		   return -1;
-	   IAVLNode del_node = getNode(k);
-	   IAVLNode parent = del_node.getParent();
-	   if(isLeaf(del_node)){
-		   // replace to virtual on the right side
-		   return reBalance(parent);
-	   }
-	   if(isUnary(del_node) != -1){
-		   int side = isUnary(del_node);
-		   if(side == 0)
+	   IAVLNode del_node = search(k);
+	   if(isLeaf(del_node)){ // leaf
+		   IAVLNode parent = del_node.getParent();
+		   if(difference(parent, parent.getLeft()) == 1 && difference(parent, parent.getRight()) == 1) // difference of rank: 1 1
+			   del_node.setNoRealNode();
+		   else{ // difference of rank: 1 2 || 2 1
 
+		   }
 
 	   }
 
+
+	   return 421;	// to be replaced by student code
    }
 
    /**
@@ -299,18 +272,16 @@ public class AVLTree {
 	  private String info;
 	  private AVLNode left, parent, right;
 
-	  	private AVLNode(AVLNode parent){
+	  	private AVLNode(){
 			  this.key = -1;
 			  this.info = null;
-			  this.rank = -1;
-			  this.parent = parent;
 		}
+
 	  	public AVLNode(int key, String info){
 			  this.info = info;
 			  this.key = key;
-			  this.left = new AVLNode(this);
-			  this.right = new AVLNode(this);
-			  this.rank = 0;
+			  this.left = new AVLLeafSons();
+			  this.right = new AVLLeafSons();
 		}
 
 		public int getKey()
@@ -358,5 +329,12 @@ public class AVLTree {
 	      return this.rank; // to be replaced by student code
 	    }
   }
+	private class AVLLeafSons extends AVLNode{
+		public AVLLeafSons() {
+			super();
+		}
+	}
+
+
 }
   
