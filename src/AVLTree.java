@@ -39,16 +39,18 @@ public class AVLTree {
 	  AVLNode a = getNode(k);
 	  return a != null ? a.info : null;
   }
-
-	/**
-	 * Ido wrote this function for insert and delete
-	 * the function rebalances the tree and returns the count of operations
-	 */
-	public int reBalance(AVLNode t){
-
-		return 0;
+	public IAVLNode rotateLeft(IAVLNode t){
+		IAVLNode A = t.getLeft();
+		IAVLNode B = t.getRight().getLeft();
+		IAVLNode newroot = t.getRight();
+		newroot.setParent(t.getParent());
+		t.setParent(newroot);
+		t.setLeft(A);
+		t.setRight(B);
+		A.setParent(t);
+		B.setParent(t);
+		return newroot;
 	}
-
 	public IAVLNode rotateRight(IAVLNode node){
 		IAVLNode newRoot = node.getLeft();
 		newRoot.setParent(node.getParent());
@@ -58,6 +60,21 @@ public class AVLTree {
 		newRoot.setRight(node);
 		return newRoot;
 	}
+	public void demote(IAVLNode node){
+		node.setHeight(node.getHeight() - 1);
+	}
+	public void promote(IAVLNode node){
+		node.setHeight(node.getHeight() + 1);
+	}
+	/**
+	 * Ido wrote this function for insert and delete
+	 * the function rebalances the tree and returns the count of operations
+	 */
+	public int reBalance(AVLNode t){
+
+		return 0;
+	}
+
 	/**
    * public int insert(int k, String i)
    *
@@ -73,18 +90,6 @@ public class AVLTree {
 
 	   return 420;	// to be replaced by student code
    }
-	public IAVLNode rotateLeft(IAVLNode t){
-		IAVLNode A = t.getLeft();
-		IAVLNode B = t.getRight().getLeft();
-		IAVLNode newroot = t.getRight();
-		newroot.setParent(t.getParent());
-		t.setParent(newroot);
-		t.setLeft(A);
-		t.setRight(B);
-		A.setParent(t);
-		B.setParent(t);
-		return newroot;
-	}
 	/**
 	 * Ido wrote this function for delete
 	 * find the successor of node
