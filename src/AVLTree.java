@@ -49,6 +49,15 @@ public class AVLTree {
 		return 0;
 	}
 
+	public IAVLNode rotateRight(IAVLNode node){
+		IAVLNode newRoot = node.getLeft();
+		newRoot.setParent(node.getParent());
+		node.setParent(newRoot);
+		node.setLeft(newRoot.getRight());
+		node.getLeft().setParent(node);
+		newRoot.setRight(node);
+		return newRoot;
+	}
 	/**
    * public int insert(int k, String i)
    *
@@ -129,14 +138,14 @@ public class AVLTree {
    public int delete(int k) {
 	   if(this.search(k) == null || k < 0)
 		   return -1;
-	   IAVLNode del_node = search(k);
+	   IAVLNode del_node = getNode(k);
 	   if(isLeaf(del_node)){ // leaf
 		   IAVLNode parent = del_node.getParent();
 		   if(difference(parent, parent.getLeft()) == 1 && difference(parent, parent.getRight()) == 1) // difference of rank: 1 1
-			   del_node.setNoRealNode();
-		   else{ // difference of rank: 1 2 || 2 1
+			 //  del_node.setNoRealNode();
+		   //else{ // difference of rank: 1 2 || 2 1
 
-		   }
+		   //}
 
 	   }
 
@@ -284,17 +293,18 @@ public class AVLTree {
 	  private String info;
 	  private AVLNode left, parent, right;
 
-	  	private AVLNode(){
+	  	private AVLNode(AVLNode parent){
 			  this.key = -1;
 			  this.info = null;
 			  this.rank = -1;
+			  this.parent = parent;
 		}
 
 	  	public AVLNode(int key, String info){
 			  this.info = info;
 			  this.key = key;
-			  this.left = new AVLLeafSons();
-			  this.right = new AVLLeafSons();
+			  this.left = new AVLNode(this);
+			  this.right = new AVLNode(this);
 		}
 
 		public int getKey()
@@ -342,12 +352,5 @@ public class AVLTree {
 	      return this.rank; // to be replaced by student code
 	    }
   }
-	private class AVLLeafSons extends AVLNode{
-		public AVLLeafSons() {
-			super();
-		}
-	}
-
-
 }
   
