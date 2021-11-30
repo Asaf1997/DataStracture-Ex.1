@@ -157,6 +157,13 @@ public class AVLTree {
 		   node = new AVLNode((AVLNode)parent);
 		   return 0;
 	   }
+	   else if (node.isUnary() == 0){
+		   if(parent.getKey() < node.getKey()) { parent.setRight(node.getLeft()); }
+		   else { parent.setLeft(node.getLeft()); }
+		   node.getLeft().setParent(parent);
+		   node.setLeft(null);
+		   reBalance((AVLNode) parent);
+	   }
 	   return 421;	// to be replaced by student code
    }
 
