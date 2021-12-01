@@ -101,9 +101,6 @@ public class AVLTree {
 					rotateLeft(t.getLeft());
 					rotateRight(t);
 				}
-				else{
-					System.out.println("error in rebalanced: leftson_diff is not 1,2 or 2,1");
-				}
 			}
 			else if (leftDiff == 2 && rightDiff == 1){
 				int rightSon_leftDiff = t.getRight().getLeftDiff();
@@ -121,9 +118,6 @@ public class AVLTree {
 					t.demote();
 					rotateLeft(t);
 				}
-				else{
-					System.out.println("error in rebalanced: rightson_diff is not 1,2 or 2,1");
-				}
 			}
 			t = t.getParent();
 		}
@@ -140,10 +134,17 @@ public class AVLTree {
    * Returns -1 if an item with key k already exists in the tree.
    */
    public int insert(int k, String i) {
-
-	   //ASAF
-
-	   return 420;	// to be replaced by student code
+	   if (empty()) { this.root = new AVLNode(k, i); size++; return 0;}
+	   IAVLNode t = this.root;
+	   while (t.getKey() != -1){
+		   if (t.getKey() == k){ return -1; }
+		   t = t.getKey() > k ? t.getLeft() : t.getRight();
+	   }
+	   t = t.getParent();
+	   if (t.getKey() > k){ t.setLeft(new AVLNode(k, i)); }
+	   else{ t.setRight(new AVLNode(k, i)); }
+	   this.size ++;
+	   return reBalance(t);
    }
 
 	/**
@@ -489,7 +490,7 @@ public class AVLTree {
 		}
 
 	   public int getRightDiff(){
-		   return this.rank - this.left.rank;
+		   return this.rank - this.right.rank;
 	   }
 
 	   public boolean isLeaf(){
@@ -508,6 +509,10 @@ public class AVLTree {
 
 	   public void demote(){
 			  this.rank -= 1;
+	   }
+
+	   public String toString(){
+			  return "key: "+this.key;
 	   }
   }
 }

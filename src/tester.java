@@ -11,6 +11,7 @@ public class tester {
     }
 
     public static void asafTest(){
+        /**
         AVLTree t1 = new AVLTree();
         AVLTree.AVLNode a1 = new AVLTree.AVLNode(1, "1");
         AVLTree.AVLNode a2 = new AVLTree.AVLNode(2, "2");
@@ -32,6 +33,27 @@ public class tester {
 
         t1.rotateLeft(t1.root);
         t1.print();
+**/
+
+        AVLTree t2 = new AVLTree();
+        System.out.println(t2.insert(14,"14"));
+        t2.print();
+        System.out.println(t2.insert(12,"12"));
+        t2.print();
+        System.out.println(t2.insert(11,"11"));
+        t2.print();
+        System.out.println(t2.insert(13,"13"));
+        t2.print();
+        System.out.println(t2.insert(15,"15"));
+        t2.print();
+        System.out.println(t2.insert(1,"1"));
+        t2.print();
+        System.out.println(t2.insert(2,"2"));
+        t2.print();
+        System.out.println(t2.insert(3,"3"));
+        t2.print();
+        System.out.println(t2.insert(4,"4"));
+        t2.print();
 
     }
 
