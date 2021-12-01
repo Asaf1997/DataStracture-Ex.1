@@ -194,20 +194,51 @@ public class AVLTree {
    public int delete(int k) {
 	   if(this.search(k) == null || k < 0)
 		   return -1;
+	   this.size--;
 	   IAVLNode node = getNode(k);
 	   IAVLNode parent = node.getParent();
 	   if(node.isLeaf()){
-		   node = new AVLNode((AVLNode)parent);
+		   node = new AVLNode((AVLNode)parent); // check
 		   return 0;
 	   }
-	   else if (node.isUnary() == 0){
+	   else if (node.isUnary() == 0){ // subtree left
 		   if(parent.getKey() < node.getKey()) { parent.setRight(node.getLeft()); }
 		   else { parent.setLeft(node.getLeft()); }
 		   node.getLeft().setParent(parent);
 		   node.setLeft(null);
-		   reBalance(parent);
+		   node.setParent(null);
+		   return reBalance(parent);
 	   }
-	   return 421;	// to be replaced by student code
+	   else if(node.isUnary() == 1){ // subtree right
+		   if(parent.getKey() < node.getKey()) { parent.setRight(node.getRight()); }
+		   else { parent.setLeft(node.getRight()); }
+		   node.getRight().setParent(parent);
+		   node.setRight(null);
+		   node.setParent(null);
+		   return reBalance(parent);
+	   }
+	   else{
+		   // take the successor
+		   IAVLNode suc_node = successor(node);
+		   IAVLNode suc_parent = suc_node.getParent();
+		   if(suc_node.isLeaf()){
+			   suc_node.getParent().setLeft(new AVLNode((AVLNode) suc_node.getParent()));
+		   }
+		   else{ // has no left child
+			   suc_node.getParent().setLeft(suc_node.getRight());
+			   suc_node.getRight().setParent(suc_node.getParent());
+		   }
+		   // replace node by successor
+		   suc_node.setParent(parent);
+		   if(parent.getLeft() == node) { parent.setLeft(suc_node); }
+		   else { parent.setRight(suc_node); }
+		   suc_node.setLeft(node.getLeft());
+		   suc_node.setRight(node.getRight());
+		   node.getLeft().setParent(suc_node);
+		   node.getRight().setParent(suc_node);
+		   suc_node.setHeight(node.getHeight());
+		   return reBalance(node);
+	   }
    }
 
    /**
