@@ -1,5 +1,7 @@
 package src;
 
+import java.util.ArrayList;
+
 /**
  *
  * AVLTree
@@ -11,7 +13,7 @@ package src;
 
 public class AVLTree {
 
-	private AVLNode root;
+	public AVLNode root;
 	private int size;
 
 	public AVLTree(){
@@ -36,7 +38,7 @@ public class AVLTree {
    * otherwise, returns null.
    */
   public String search(int k) {
-	  AVLNode a = getNode(k);
+	  AVLNode a = (AVLNode) getNode(k);
 	  return a != null ? a.info : null;
   }
 
@@ -83,10 +85,11 @@ public class AVLTree {
 			}
 			else if (leftDiff == 0 && rightDiff == 2){
 				counter ++;
-
+				
 			}
 
 		}
+		return  0 ;
 	}
 
 	/**
@@ -276,6 +279,68 @@ public class AVLTree {
 	   return -1;
    }
 
+	//prints the tree level by level until the last virtual node
+	// V - virtual node
+	//N - null
+	public void treePrinter(){
+		ArrayList<IAVLNode> currList = new ArrayList<>();
+		currList.add(root);
+		int level = root.getHeight();
+
+		while (currList.size() > 0) {
+
+			String space = "  ";
+
+			for (int i = 0; i < level; i++) {
+				space = space + space;
+			}
+			level--;
+			System.out.print(space);
+
+
+			ArrayList<IAVLNode> childrenList = new ArrayList<>();
+
+			for (IAVLNode node: currList) {
+				if (node != null && node.isRealNode()) {
+					System.out.print(node.getValue() + space);
+					childrenList.add(node.getLeft());
+					childrenList.add(node.getRight());
+				}
+				else if (node != null) {
+					System.out.print("V");
+					System.out.print(space);
+					childrenList.add(null);
+					childrenList.add(null);
+
+				}
+				else { //node == null
+					System.out.print("N");
+					System.out.print(space);
+
+					childrenList.add(null);
+					childrenList.add(null);
+				}
+
+			}
+			boolean onlyNull = true;
+
+			for (int i = 0; i < childrenList.size(); i++) {
+				if (childrenList.get(i) != null) {
+					onlyNull = false;
+					break;
+				}
+			}
+			if (onlyNull) {
+				break;
+			}
+			currList = childrenList;
+			childrenList = new ArrayList<>();
+
+			System.out.println();
+			System.out.println();
+		}
+	}
+
 	/** 
 	 * public interface IAVLNode
 	 * ! Do not delete or modify this - otherwise all tests will fail !
@@ -308,7 +373,7 @@ public class AVLTree {
     * 
     * This class can and MUST be modified (It must implement IAVLNode).
     */
-  public class AVLNode implements IAVLNode{
+  public static class AVLNode implements IAVLNode{
 	  private int key, rank;
 	  private String info;
 	  private AVLNode left, parent, right;
@@ -336,17 +401,19 @@ public class AVLTree {
 		{
 			return this.info;
 		}
-		public void setLeft(IAVLNode node)
+		public void setLeft(IAVLNode node) // this also changes this parent of node
 		{
 			this.left = (AVLNode) node;
+			((AVLNode) node).parent = this;
 		}
 		public IAVLNode getLeft()
 		{
 			return this.left;
 		}
-		public void setRight(IAVLNode node)
+		public void setRight(IAVLNode node) // this also changes this parent of node
 		{
 			this.right = (AVLNode) node;
+			((AVLNode) node).parent = this;
 		}
 		public IAVLNode getRight()
 		{
