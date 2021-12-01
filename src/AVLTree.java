@@ -42,19 +42,19 @@ public class AVLTree {
 	  return a != null ? a.info : null;
   }
 
-	public IAVLNode rotateLeft(IAVLNode t){
-		IAVLNode A = t.getLeft();
-		IAVLNode B = t.getRight().getLeft();
-		IAVLNode newroot = t.getRight();
-		newroot.setParent(t.getParent());
-		t.setParent(newroot);
-		t.setLeft(A);
-		t.setRight(B);
-		A.setParent(t);
-		B.setParent(t);
-		if(newroot.getParent().getKey() < newroot.getKey()) { newroot.getParent().setRight(newroot); }
-		else { newroot.getParent().setLeft(newroot); }
-		return newroot;
+	public IAVLNode rotateLeft(IAVLNode node){
+		IAVLNode newRoot = node.getRight();
+		newRoot.setParent(node.getParent());
+		node.setParent(newRoot);
+		node.setRight(newRoot.getLeft());
+		node.getRight().setParent(node);
+		newRoot.setLeft(node);
+
+		if (newRoot.getParent() == null){ this.root = (AVLNode) newRoot; return newRoot; }
+		if (newRoot.getParent().getKey() < newRoot.getKey()){ newRoot.getParent().setRight(newRoot); }
+		else { newRoot.getParent().setLeft(newRoot); }
+
+		return newRoot;
 	}
 
 	public IAVLNode rotateRight(IAVLNode node){
@@ -65,6 +65,7 @@ public class AVLTree {
 		node.getLeft().setParent(node);
 		newRoot.setRight(node);
 
+		if (newRoot.getParent() == null){ this.root = (AVLNode) newRoot; return newRoot; }
 		if (newRoot.getParent().getKey() < newRoot.getKey()){ newRoot.getParent().setRight(newRoot); }
 		else { newRoot.getParent().setLeft(newRoot); }
 
@@ -75,21 +76,58 @@ public class AVLTree {
 	 * Ido wrote this function for insert and delete
 	 * the function rebalances the tree and returns the count of operations
 	 */
-	public int reBalance(AVLNode t){
+	public int reBalance(IAVLNode t) {
 		int counter = 0;
 		while (t != null){
 			int leftDiff = t.getLeftDiff();
 			int rightDiff = t.getRightDiff();
+
 			if (leftDiff == 0 && rightDiff == 0 || leftDiff == 0 && rightDiff == 1 || leftDiff == 1 && rightDiff == 0){
 				t.promote();
 			}
 			else if (leftDiff == 0 && rightDiff == 2){
-				counter ++;
-				
+				int leftSon_leftDiff = t.getLeft().getLeftDiff();
+				int leftSon_rightDiff = t.getLeft().getRightDiff();
+				if (leftSon_leftDiff == 1 && leftSon_rightDiff == 2){
+					counter++;
+					t.demote();
+					rotateRight(t);
+				}
+				else if (leftSon_leftDiff == 2 && leftSon_rightDiff == 1){
+					counter += 2;
+					t.demote();
+					t.getLeft().demote();
+					t.getLeft().getRight().promote();
+					rotateLeft(t.getLeft());
+					rotateRight(t);
+				}
+				else{
+					System.out.println("error in rebalanced: leftson_diff is not 1,2 or 2,1");
+				}
 			}
-
+			else if (leftDiff == 2 && rightDiff == 1){
+				int rightSon_leftDiff = t.getRight().getLeftDiff();
+				int rightSon_rightDiff = t.getRight().getRightDiff();
+				if (rightSon_leftDiff == 1 && rightSon_rightDiff == 2){
+					counter += 2;
+					t.demote();
+					t.getRight().demote();
+					t.getRight().getLeft().promote();
+					rotateRight(t.getRight());
+					rotateLeft(t);
+				}
+				else if (rightSon_leftDiff == 2 && rightSon_rightDiff == 1){
+					counter ++;
+					t.demote();
+					rotateLeft(t);
+				}
+				else{
+					System.out.println("error in rebalanced: rightson_diff is not 1,2 or 2,1");
+				}
+			}
+			t = t.getParent();
 		}
-		return  0 ;
+		return counter;
 	}
 
 	/**
@@ -107,6 +145,7 @@ public class AVLTree {
 
 	   return 420;	// to be replaced by student code
    }
+
 	/**
 	 * Ido wrote this function for delete
 	 * find the successor of node
@@ -165,7 +204,7 @@ public class AVLTree {
 		   else { parent.setLeft(node.getLeft()); }
 		   node.getLeft().setParent(parent);
 		   node.setLeft(null);
-		   reBalance((AVLNode) parent);
+		   reBalance(parent);
 	   }
 	   return 421;	// to be replaced by student code
    }
@@ -340,7 +379,13 @@ public class AVLTree {
 			System.out.println();
 		}
 	}
-
+	public void print(){
+	   this.treePrinter();
+	   System.out.println();
+	   System.out.println();
+	   System.out.println();
+	   System.out.println();
+	}
 	/** 
 	 * public interface IAVLNode
 	 * ! Do not delete or modify this - otherwise all tests will fail !
