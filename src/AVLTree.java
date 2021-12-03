@@ -120,6 +120,64 @@ public class AVLTree {
 					rotateLeft(t);
 				}
 			}
+
+			//---------------------------------------------------
+
+			if (leftDiff == 2 && rightDiff == 2){
+				counter++;
+				t.demote();
+			}
+			else if (leftDiff == 3 && rightDiff == 1){
+				int rightSon_leftDiff = t.getRight().getLeftDiff();
+				int rightSon_rightDiff = t.getRight().getRightDiff();
+				if (rightSon_leftDiff == 1 && rightSon_rightDiff == 1){
+					counter += 3;
+					t.demote();
+					t.getRight().promote();
+					rotateLeft(t);
+				}
+				else if (rightSon_leftDiff == 2 && rightSon_leftDiff == 1){
+					counter += 3;
+					t.demote();
+					t.demote();
+					rotateLeft(t);
+				}
+				else if (rightSon_leftDiff == 1 && rightSon_leftDiff == 2){
+					counter += 6;
+					t.demote();
+					t.demote();
+					t.getRight().demote();
+					t.getRight().getLeft().promote();
+					rotateRight(t.getRight());
+					rotateLeft(t);
+				}
+			}
+			else if (leftDiff == 1 && rightDiff == 3){
+				int leftSon_leftDiff = t.getLeft().getLeftDiff();
+				int leftSon_rightDiff = t.getLeft().getRightDiff();
+				if (leftSon_leftDiff == 1 && leftSon_rightDiff == 1){
+					counter += 3;
+					t.demote();
+					t.getLeft().promote();
+					rotateRight(t);
+				}
+				else if (leftSon_leftDiff == 2 && leftSon_leftDiff == 1){
+					counter += 6;
+					t.demote();
+					t.demote();
+					t.getLeft().demote();
+					t.getLeft().getRight().promote();
+					rotateLeft(t.getLeft());
+					rotateRight(t);
+				}
+				else if (leftSon_leftDiff == 1 && leftSon_leftDiff == 2){
+					counter += 3;
+					t.demote();
+					t.demote();
+					rotateRight(t);
+				}
+
+			}
 			t = t.getParent();
 		}
 		return counter;
@@ -231,7 +289,6 @@ public class AVLTree {
 		   if(suc_node.isLeaf()){
 			   if (suc_node.position() == 0)
 				   suc_parent.setLeft(new AVLNode((AVLNode) suc_parent));
-
 			   else
 				   suc_parent.setRight(new AVLNode((AVLNode) suc_parent));
 		   }
