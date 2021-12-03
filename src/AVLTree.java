@@ -491,6 +491,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	   this.treePrinter();
 	   System.out.println();
 	   System.out.println();
+	   System.out.println("tree size: "+ this.size);
 	   System.out.println();
 	   for (IAVLNode node : this){
 		   System.out.print("| "+node + ", rank: "+node.getHeight() + " |");
