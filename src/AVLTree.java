@@ -83,18 +83,19 @@ public class AVLTree {
 			int rightDiff = t.getRightDiff();
 
 			if (leftDiff == 0 && rightDiff == 0 || leftDiff == 0 && rightDiff == 1 || leftDiff == 1 && rightDiff == 0){
+				counter++;
 				t.promote();
 			}
 			else if (leftDiff == 0 && rightDiff == 2){
 				int leftSon_leftDiff = t.getLeft().getLeftDiff();
 				int leftSon_rightDiff = t.getLeft().getRightDiff();
 				if (leftSon_leftDiff == 1 && leftSon_rightDiff == 2){
-					counter++;
+					counter += 2;
 					t.demote();
 					rotateRight(t);
 				}
 				else if (leftSon_leftDiff == 2 && leftSon_rightDiff == 1){
-					counter += 2;
+					counter += 5;
 					t.demote();
 					t.getLeft().demote();
 					t.getLeft().getRight().promote();
@@ -106,7 +107,7 @@ public class AVLTree {
 				int rightSon_leftDiff = t.getRight().getLeftDiff();
 				int rightSon_rightDiff = t.getRight().getRightDiff();
 				if (rightSon_leftDiff == 1 && rightSon_rightDiff == 2){
-					counter += 2;
+					counter += 5;
 					t.demote();
 					t.getRight().demote();
 					t.getRight().getLeft().promote();
@@ -114,7 +115,7 @@ public class AVLTree {
 					rotateLeft(t);
 				}
 				else if (rightSon_leftDiff == 2 && rightSon_rightDiff == 1){
-					counter ++;
+					counter += 2;
 					t.demote();
 					rotateLeft(t);
 				}
@@ -192,29 +193,31 @@ public class AVLTree {
    * Returns -1 if an item with key k was not found in the tree.
    */
    public int delete(int k) {
-	   if(this.search(k) == null || k < 0)
+	   IAVLNode node = getNode(k);
+	   if (node == null)
 		   return -1;
 	   this.size--;
-	   IAVLNode node = getNode(k);
 	   IAVLNode parent = node.getParent();
 	   if(node.isLeaf()){
-		   node = new AVLNode((AVLNode)parent); // check
-		   return 0;
+		   if (this.size == 0){ this.root = null; }
+		   else {
+			   node = new AVLNode((AVLNode) parent);
+			   return reBalance(parent);
+		   }
 	   }
 	   else if (node.isUnary() == 0){ // subtree left
-		   if(parent.getKey() < node.getKey()) { parent.setRight(node.getLeft()); }
+		   if (parent == null){ this.root = (AVLNode) node.getLeft();}
+		   else if(parent.getKey() < node.getKey()) { parent.setRight(node.getLeft()); }
 		   else { parent.setLeft(node.getLeft()); }
 		   node.getLeft().setParent(parent);
-		   node.setLeft(null);
-		   node.setParent(null);
 		   return reBalance(parent);
 	   }
+
 	   else if(node.isUnary() == 1){ // subtree right
+		   if (parent == null){ this.root = (AVLNode) node.getRight();}
 		   if(parent.getKey() < node.getKey()) { parent.setRight(node.getRight()); }
 		   else { parent.setLeft(node.getRight()); }
 		   node.getRight().setParent(parent);
-		   node.setRight(null);
-		   node.setParent(null);
 		   return reBalance(parent);
 	   }
 	   else{
@@ -222,23 +225,30 @@ public class AVLTree {
 		   IAVLNode suc_node = successor(node);
 		   IAVLNode suc_parent = suc_node.getParent();
 		   if(suc_node.isLeaf()){
-			   suc_node.getParent().setLeft(new AVLNode((AVLNode) suc_node.getParent()));
+			   if (suc_node.position() == 0)
+				   suc_parent.setLeft(new AVLNode((AVLNode) suc_parent));
+
+			   else
+				   suc_parent.setRight(new AVLNode((AVLNode) suc_parent));
 		   }
 		   else{ // has no left child
-			   suc_node.getParent().setLeft(suc_node.getRight());
-			   suc_node.getRight().setParent(suc_node.getParent());
+			   if (suc_node.position() == 0)
+				   suc_parent.setLeft(suc_node.getRight());
+			   else
+				   suc_parent.setRight(suc_node.getRight());
 		   }
 		   // replace node by successor
 		   suc_node.setParent(parent);
-		   if(parent.getLeft() == node) { parent.setLeft(suc_node); }
+		   if (suc_node.position() == -1)
+			   root = (AVLNode) suc_node;
+		   else if(suc_node.position() == 0) { parent.setLeft(suc_node); }
 		   else { parent.setRight(suc_node); }
 		   suc_node.setLeft(node.getLeft());
 		   suc_node.setRight(node.getRight());
-		   node.getLeft().setParent(suc_node);
-		   node.getRight().setParent(suc_node);
 		   suc_node.setHeight(node.getHeight());
-		   return reBalance(node);
+		   return reBalance(suc_parent);
 	   }
+	   return 0;
    }
 
    /**
@@ -440,6 +450,7 @@ public class AVLTree {
 		public int isUnary();
 		public void promote();
 		public void demote();
+		public int position();
 	}
 
    /** 
@@ -544,6 +555,14 @@ public class AVLTree {
 
 	   public String toString(){
 			  return "key: "+this.key;
+	   }
+
+	   public int position(){
+			  if (this.parent == null)
+				  return -1;
+			  if (this.parent.key < this.key)
+				  return 1;
+			  return 0;
 	   }
   }
 }

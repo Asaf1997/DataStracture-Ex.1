@@ -36,25 +36,18 @@ public class tester {
 **/
 
         AVLTree t2 = new AVLTree();
-        System.out.println(t2.insert(14,"14"));
+        t2.insert(14,"14");
+        t2.insert(12,"12");
+        t2.insert(11,"11");
+        t2.insert(13,"13");
+        t2.insert(15,"15");
+        t2.insert(1,"1");
+        t2.insert(2,"2");
+        t2.insert(3,"3");
+        t2.insert(4,"4");
         t2.print();
-        System.out.println(t2.insert(12,"12"));
+        System.out.println(t2.delete(3));
         t2.print();
-        System.out.println(t2.insert(11,"11"));
-        t2.print();
-        System.out.println(t2.insert(13,"13"));
-        t2.print();
-        System.out.println(t2.insert(15,"15"));
-        t2.print();
-        System.out.println(t2.insert(1,"1"));
-        t2.print();
-        System.out.println(t2.insert(2,"2"));
-        t2.print();
-        System.out.println(t2.insert(3,"3"));
-        t2.print();
-        System.out.println(t2.insert(4,"4"));
-        t2.print();
-
     }
 
 }
