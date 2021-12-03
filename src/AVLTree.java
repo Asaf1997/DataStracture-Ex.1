@@ -319,11 +319,12 @@ public class AVLTree {
     * or null if the tree is empty.
     */
    public String min() {
-
-	   // IDO
-
-
-	   return "minDefaultString"; // to be replaced by student code
+	   if(this.size == 0){ return null; }
+	   AVLNode curr = this.root;
+	   while (curr.left.rank != -1){
+		   curr = curr.left;
+	   }
+	   return curr.info;
    }
 
    /**
@@ -362,12 +363,14 @@ public class AVLTree {
    * or an empty array if the tree is empty.
    */
   public String[] infoToArray() {
-
-	  // IDO
-
-	  return new String[55]; // to be replaced by student code
+	  if(this.size == 0){ return null; }
+	  int[] keyArray = this.keysToArray();
+	  String[] infoArray = new String[keyArray.length];
+	  for(int i=0; i<keyArray.length;i++){
+		  infoArray[i] = search(keyArray[i]);
+	  }
+	  return infoArray;
   }
-
    /**
     * public int size()
     *
