@@ -103,7 +103,7 @@ public class AVLTree {
 					rotateRight(t);
 				}
 			}
-			else if (leftDiff == 2 && rightDiff == 1){
+			else if (leftDiff == 2 && rightDiff == 0){
 				int rightSon_leftDiff = t.getRight().getLeftDiff();
 				int rightSon_rightDiff = t.getRight().getRightDiff();
 				if (rightSon_leftDiff == 1 && rightSon_rightDiff == 2){
@@ -153,9 +153,9 @@ public class AVLTree {
 	 * find the successor of node
 	 */
 	public IAVLNode successor(IAVLNode node){
-		if(node.getRight() != null){
+		if(node.getRight().getKey() != -1){
 			IAVLNode left_subtree = node.getRight();
-			while(left_subtree.getLeft() != null){
+			while(left_subtree.getLeft().getKey() != -1){
 				left_subtree = left_subtree.getLeft();
 			}
 			return left_subtree;
@@ -201,7 +201,11 @@ public class AVLTree {
 	   if(node.isLeaf()){
 		   if (this.size == 0){ this.root = null; }
 		   else {
-			   node = new AVLNode((AVLNode) parent);
+			   IAVLNode vir_node = new AVLNode((AVLNode) parent);
+			   if(node.position() == 0)
+				   parent.setLeft(vir_node);
+			   else
+				   parent.setRight(vir_node);
 			   return reBalance(parent);
 		   }
 	   }

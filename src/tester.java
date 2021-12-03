@@ -46,7 +46,7 @@ public class tester {
         t2.insert(3,"3");
         t2.insert(4,"4");
         t2.print();
-        System.out.println(t2.delete(3));
+        System.out.println(t2.delete(12));
         t2.print();
     }
 
