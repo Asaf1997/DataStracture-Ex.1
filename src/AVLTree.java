@@ -136,13 +136,13 @@ public class AVLTree {
 					t.getRight().promote();
 					rotateLeft(t);
 				}
-				else if (rightSon_leftDiff == 2 && rightSon_leftDiff == 1){
+				else if (rightSon_leftDiff == 2 && rightSon_rightDiff == 1){
 					counter += 3;
 					t.demote();
 					t.demote();
 					rotateLeft(t);
 				}
-				else if (rightSon_leftDiff == 1 && rightSon_leftDiff == 2){
+				else if (rightSon_leftDiff == 1 && rightSon_rightDiff == 2){
 					counter += 6;
 					t.demote();
 					t.demote();
@@ -161,7 +161,7 @@ public class AVLTree {
 					t.getLeft().promote();
 					rotateRight(t);
 				}
-				else if (leftSon_leftDiff == 2 && leftSon_leftDiff == 1){
+				else if (leftSon_leftDiff == 2 && leftSon_rightDiff == 1){
 					counter += 6;
 					t.demote();
 					t.demote();
@@ -170,7 +170,7 @@ public class AVLTree {
 					rotateLeft(t.getLeft());
 					rotateRight(t);
 				}
-				else if (leftSon_leftDiff == 1 && leftSon_leftDiff == 2){
+				else if (leftSon_leftDiff == 1 && leftSon_rightDiff == 2){
 					counter += 3;
 					t.demote();
 					t.demote();

@@ -2,8 +2,8 @@ package src;
 
 public class tester {
     public static void main(String[] args) {
-        //asafTest();
-        idoTest();
+        asafTest();
+        //idoTest();
     }
 
     public static void idoTest(){
@@ -12,8 +12,9 @@ public class tester {
         AVLTree.AVLNode a2 = new AVLTree.AVLNode(2, "2");
         AVLTree.AVLNode a3 = new AVLTree.AVLNode(3, "3");
         t2.insert(a1.getKey(), a1.getValue());
-        t2.insert(a1.getKey(), a1.getValue());
-        t2.insert(a1.getKey(), a1.getValue());
+        t2.insert(a2.getKey(), a2.getValue());
+        System.out.println(t2.root.getHeight());
+        t2.delete(a2.getKey());
         System.out.println(t2.root.getHeight());
     }
 
@@ -53,8 +54,12 @@ public class tester {
         t2.insert(3,"3");
         t2.insert(4,"4");
         t2.print();
-        System.out.println(t2.delete(15));
-        System.out.println(t2.delete(13));
+        System.out.println(t2.delete(12));
+        System.out.println(t2.delete(11));
+        System.out.println(t2.delete(3));
+        System.out.println(t2.delete(1));
+        System.out.println(t2.delete(4));
+        System.out.println(t2.delete(2));
         t2.print();
     }
 
