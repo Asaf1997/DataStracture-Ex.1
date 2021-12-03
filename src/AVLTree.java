@@ -1,6 +1,8 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Stack;
 
 /**
  *
@@ -11,7 +13,7 @@ import java.util.ArrayList;
  *
  */
 
-public class AVLTree {
+public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 
 	public AVLNode root;
 	private int size;
@@ -211,9 +213,9 @@ public class AVLTree {
 	 * find the successor of node
 	 */
 	public IAVLNode successor(IAVLNode node){
-		if(node.getRight().getKey() != -1){
+		if(node.getRight().getHeight() != -1){
 			IAVLNode left_subtree = node.getRight();
-			while(left_subtree.getLeft().getKey() != -1){
+			while(left_subtree.getLeft().getHeight() != -1){
 				left_subtree = left_subtree.getLeft();
 			}
 			return left_subtree;
@@ -228,13 +230,9 @@ public class AVLTree {
 		}
 	}
 
-	public int difference(IAVLNode node1, IAVLNode node2){
-		return node1.getHeight() - node2.getHeight();
-	}
-
 	private IAVLNode getNode(int k){
 		IAVLNode curr = this.root;
-		while (curr.getKey() != -1){
+		while (curr.getHeight() != -1){
 			if (curr.getKey() == k){ return curr; }
 			curr = curr.getKey() < k ? curr.getRight() : curr.getLeft() ;
 		}
@@ -257,7 +255,7 @@ public class AVLTree {
 	   this.size--;
 	   IAVLNode parent = node.getParent();
 	   if(node.isLeaf()){
-		   if (this.size == 0){ this.root = null; }
+		   if (this.size == 0){ this.root = null;}
 		   else {
 			   IAVLNode vir_node = new AVLNode((AVLNode) parent);
 			   if(node.position() == 0)
@@ -319,7 +317,7 @@ public class AVLTree {
     * or null if the tree is empty.
     */
    public String min() {
-	   if(this.size == 0){ return null; }
+	   if (this.size == 0){ return null; }
 	   AVLNode curr = this.root;
 	   while (curr.left.rank != -1){
 		   curr = curr.left;
@@ -351,8 +349,11 @@ public class AVLTree {
    */
   public int[] keysToArray() {
 	  int[] keys = new int[this.size];
-
-	  return null;
+	  int i = 0;
+	  for (IAVLNode node: this){
+		  keys[i++] = node.getKey();
+	  }
+	  return keys;
   }
 
   /**
@@ -363,14 +364,15 @@ public class AVLTree {
    * or an empty array if the tree is empty.
    */
   public String[] infoToArray() {
-	  if(this.size == 0){ return null; }
-	  int[] keyArray = this.keysToArray();
-	  String[] infoArray = new String[keyArray.length];
-	  for(int i=0; i<keyArray.length;i++){
-		  infoArray[i] = search(keyArray[i]);
+	  if(this.size == 0){ return new String[0]; }
+	  String[] info = new String[this.size];
+	  int i=0;
+	  for (IAVLNode node : this){
+		  info[i++] = node.getValue();
 	  }
-	  return infoArray;
+	  return info;
   }
+
    /**
     * public int size()
     *
@@ -490,9 +492,20 @@ public class AVLTree {
 	   System.out.println();
 	   System.out.println();
 	   System.out.println();
+	   for (IAVLNode node : this){
+		   System.out.print("| "+node + ", rank: "+node.getHeight() + " |");
+	   }
+	   System.out.println();
+	   System.out.println();
 	   System.out.println();
 	}
-	/** 
+
+	@Override
+	public Iterator iterator() {
+		return new TreeIterator(this);
+	}
+
+	/**
 	 * public interface IAVLNode
 	 * ! Do not delete or modify this - otherwise all tests will fail !
 	 */
@@ -628,6 +641,43 @@ public class AVLTree {
 				  return 1;
 			  return 0;
 	   }
+  }
+
+  public class TreeIterator implements Iterator<IAVLNode>{
+
+	  private IAVLNode curr;
+	  private Stack<IAVLNode> parents;
+
+	  public TreeIterator(AVLTree tree){
+		  parents = new Stack<>();
+		  IAVLNode temp = tree.root;
+		  if (temp == null){ curr = null; return; }
+		  while (temp.getHeight() != -1){
+			  parents.push(temp);
+			  temp = temp.getLeft();
+		  }
+		  curr = parents.pop();
+	  }
+
+	  @Override
+	  public boolean hasNext() {
+		  if (curr == null)
+			  return false;
+		  return this.curr.getHeight() != -1 || !parents.empty();
+	  }
+
+	  @Override
+	  public IAVLNode next() {
+		  IAVLNode temp = curr;
+		  curr = curr.getRight();
+		  while (curr.getHeight() != -1){
+			  parents.push(curr);
+			  curr = curr.getLeft();
+		  }
+		  if(!parents.empty())
+			  curr = parents.pop();
+		  return temp;
+	  }
   }
 }
   

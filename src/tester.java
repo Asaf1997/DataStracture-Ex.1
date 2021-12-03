@@ -1,5 +1,7 @@
 package src;
 
+import java.util.Arrays;
+
 public class tester {
     public static void main(String[] args) {
         asafTest();
@@ -7,6 +9,7 @@ public class tester {
     }
 
     public static void idoTest(){
+        /**
         AVLTree t2 = new AVLTree();
         AVLTree.AVLNode a1 = new AVLTree.AVLNode(1, "1");
         AVLTree.AVLNode a2 = new AVLTree.AVLNode(2, "2");
@@ -16,6 +19,7 @@ public class tester {
         System.out.println(t2.root.getHeight());
         t2.delete(a2.getKey());
         System.out.println(t2.root.getHeight());
+         **/
     }
 
     public static void asafTest(){
@@ -54,6 +58,7 @@ public class tester {
         t2.insert(3,"3");
         t2.insert(4,"4");
         t2.print();
+        /**
         System.out.println(t2.delete(12));
         System.out.println(t2.delete(11));
         System.out.println(t2.delete(3));
@@ -61,6 +66,9 @@ public class tester {
         System.out.println(t2.delete(4));
         System.out.println(t2.delete(2));
         t2.print();
+         **/
+
+        System.out.println(Arrays.toString(t2.keysToArray()));
     }
 
 }
