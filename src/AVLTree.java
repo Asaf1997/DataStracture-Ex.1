@@ -533,9 +533,67 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * postcondition: none
 	 */
 	public int join(IAVLNode x, AVLTree t) {
-		// IDO
-
-		return -1;
+		if(t.size == 0 && this.size == 0){
+			this.insert(x.getKey(), x.getValue());
+			return 1;
+		}
+		if(t.size == 0){
+			this.insert(x.getKey(), x.getValue());
+			return Math.abs(this.root.rank - (-1)) + 1;
+		}
+		if (this.size == 0){
+			t.insert(x.getKey(), x.getValue());
+			this.root = t.root;
+			return Math.abs((-1) - t.root.rank) + 1;
+		}
+		// tree and t are not empty
+		IAVLNode biggerKeyTree;
+		IAVLNode smallerKeyTree;
+		if(t.root.key < this.root.key){ // keys(t) < x < keys()
+			biggerKeyTree = this.root;
+			smallerKeyTree = t.root;
+		}
+		else{
+			biggerKeyTree = t.root;
+			smallerKeyTree = this.root;
+		}
+		int k1 = smallerKeyTree.getHeight();
+		int k2 = biggerKeyTree.getHeight();
+		if(k1 == k2){ // same rank
+			this.root = (AVLNode) x;
+			this.root.setLeft(smallerKeyTree);
+			this.root.setRight(biggerKeyTree);
+			this.root.setHeight(k1 + 1);
+		}
+		else if(k1 < k2){
+			this.root = (AVLNode) biggerKeyTree;
+			IAVLNode node = biggerKeyTree;
+			while(node.getHeight() > k1)
+				node = node.getLeft();
+			// now node.getHeight() == k1/k1 -1
+			AVLNode parent = (AVLNode) node.getParent();
+			x.setLeft(smallerKeyTree);
+			x.setRight(node);
+			x.setHeight(k1 + 1);
+			x.setParent(parent);
+			parent.setLeft(x);
+			reBalance(x);
+		}
+		else{
+			this.root = (AVLNode) smallerKeyTree;
+			IAVLNode node = smallerKeyTree;
+			while(node.getHeight() > k2)
+				node = node.getRight();
+			// now node.getHeight() == k2/k2 -1
+			AVLNode parent = (AVLNode) node.getParent();
+			x.setLeft(node);
+			x.setRight(biggerKeyTree);
+			x.setHeight(k2 + 1);
+			x.setParent(parent);
+			parent.setRight(x);
+			reBalance(x);
+		}
+		return Math.abs(k1 - k2) + 1;
 	}
 
 	//prints the tree level by level until the last virtual node
