@@ -46,7 +46,7 @@ public class tester {
         t1.rotateLeft(t1.root);
         t1.print();
 **/
-
+/**
         AVLTree t2 = new AVLTree();
         t2.insert(14,"14");
         t2.insert(12,"12");
@@ -58,7 +58,7 @@ public class tester {
         t2.insert(3,"3");
         t2.insert(4,"4");
         t2.print();
-        /**
+
         System.out.println(t2.delete(12));
         System.out.println(t2.delete(11));
         System.out.println(t2.delete(3));
@@ -66,9 +66,12 @@ public class tester {
         System.out.println(t2.delete(4));
         System.out.println(t2.delete(2));
         t2.print();
-         **/
 
-        System.out.println(Arrays.toString(t2.keysToArray()));
+        AVLTree[] aa = t2.split(11);
+        aa[0].print();
+        aa[1].print();
+       **/
+
     }
 
 }
