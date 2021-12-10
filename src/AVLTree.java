@@ -104,6 +104,11 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 					rotateLeft(t.getLeft());
 					rotateRight(t);
 				}
+				else if (leftSon_leftDiff == 1 && leftSon_rightDiff == 1){ // can happen only in Join()
+					counter += 2;
+					t.getLeft().promote();
+					rotateRight(t);
+				}
 			}
 			else if (leftDiff == 2 && rightDiff == 0){
 				int rightSon_leftDiff = t.getRight().getLeftDiff();
@@ -119,6 +124,11 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 				else if (rightSon_leftDiff == 2 && rightSon_rightDiff == 1){
 					counter += 2;
 					t.demote();
+					rotateLeft(t);
+				}
+				else if (rightSon_leftDiff == 1 && rightSon_rightDiff == 1) { // can happen only in Join()
+					counter += 2;
+					t.getRight().promote();
 					rotateLeft(t);
 				}
 			}
