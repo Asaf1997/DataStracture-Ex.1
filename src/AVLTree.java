@@ -520,6 +520,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 
 			}
 		}
+		return null;
 	}
 
 	/**
