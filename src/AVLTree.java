@@ -297,7 +297,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 
 	// insert a given node
 	// COMPLEXITY O(log n)
-	public int insertNode(IAVLNode x){
+	private int insertNode(IAVLNode x){
 		if (empty()) {
 			this.root = (AVLNode) x;
 			size++;
