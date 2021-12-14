@@ -13,18 +13,22 @@ import java.util.*;
 
 public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 
-	public AVLNode root;
+	private AVLNode root, min, max;
 	private int size;
 
+	// COMPLEXITY O(1)
 	public AVLTree() { // making an empty tree
 		this.size = 0;
 		this.root = null;
 	}
 
-	private AVLTree(AVLNode node){ // This one is for split(), not for public use
+	// This one is for split(), not for public use
+	// COMPLEXITY O(1)
+	private AVLTree(AVLNode node){
 		if (node.getHeight() == -1){ root = null; size = 0; return; }
 		root = node;
 		size = node.size;
+		updateMinMax();
 	}
 
 	/**
@@ -32,6 +36,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * <p>
 	 * Returns true if and only if the tree is empty.
 	 */
+	// COMPLEXITY O(1)
 	public boolean empty() {
 		return this.size == 0;
 	}
@@ -42,11 +47,13 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * Returns the info of an item with key k if it exists in the tree.
 	 * otherwise, returns null.
 	 */
+	// COMPLEXITY O(log n)
 	public String search(int k) {
 		AVLNode a = (AVLNode) getNode(k); // get the node with the key k or null if it doesn't exist
 		return a != null ? a.info : null;
 	}
 
+	// COMPLEXITY O(1)
 	public IAVLNode rotateLeft(IAVLNode node) {
 		if (node == null) { // sanity check
 			return null;
@@ -77,6 +84,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 		return newRoot;
 	}
 
+	// COMPLEXITY O(1)
 	public IAVLNode rotateRight(IAVLNode node) {
 		if (node == null) {
 			return null;
@@ -110,6 +118,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	/**
 	 * the function rebalances the tree, updates node's size and returns the count of operations made
 	 */
+	// COMPLEXITY O(log n)
 	public int reBalance(IAVLNode t) {
 		int counter = 0; // counts the number of operations
 		while (t != null) {
@@ -240,6 +249,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 			t.updateSize();
 			t = t.getParent(); // for while loop
 		}
+		updateMinMax();
 		return counter;
 	}
 
@@ -252,10 +262,13 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * A promotion/rotation counts as one re-balance operation, double-rotation is counted as 2.
 	 * Returns -1 if an item with key k already exists in the tree.
 	 */
+	// COMPLEXITY O(log n)
 	public int insert(int k, String i) {
 		if (empty()) {
 			this.root = new AVLNode(k, i);
 			size++;
+			this.min = this.root;
+			this.max = this.root;
 			return 0;
 		}
 
@@ -279,13 +292,47 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 
 		t.updateSize();
 		this.size++;
+		return reBalance(t);
+	}
 
+	// insert a given node
+	// COMPLEXITY O(log n)
+	public int insertNode(IAVLNode x){
+		if (empty()) {
+			this.root = (AVLNode) x;
+			size++;
+			this.min = this.root;
+			this.max = this.root;
+			return 0;
+		}
+
+		IAVLNode t = this.root;
+		while (t.getKey() != -1) {
+			if (t.getKey() == x.getKey()) {
+				return -1;
+			}
+			t = t.getKey() > x.getKey() ? t.getLeft() : t.getRight();
+		}
+
+		t = t.getParent();
+
+		// adding the new node as a leaf
+		if (t.getKey() > x.getKey()) {
+			t.setLeft(x);
+		}
+		else {
+			t.setRight(x);
+		}
+
+		t.updateSize();
+		this.size++;
 		return reBalance(t);
 	}
 
 	/**
 	 * return the successor of node (next key in size)
 	 */
+	// COMPLEXITY O(log n)
 	public IAVLNode successor(IAVLNode node) {
 		if (node.getRight().getHeight() != -1) { // If it has a right sub-tree : go to the smallest node there
 			IAVLNode left_subtree = node.getRight();
@@ -310,7 +357,8 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	/**
 	 * Returns the node with the key k. If it doesn't exist - return null
 	 */
-	private IAVLNode getNode(int k) {
+	// COMPLEXITY O(log n)
+	public IAVLNode getNode(int k) {
 		if (empty()){ return null; }
 		IAVLNode curr = this.root;
 		while (curr.getHeight() != -1) {
@@ -331,6 +379,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * A promotion/rotation counts as one re-balance operation, double-rotation is counted as 2.
 	 * Returns -1 if an item with key k was not found in the tree.
 	 */
+	// COMPLEXITY O(log n)
 	public int delete(int k) {
 		IAVLNode node = getNode(k);
 		if (node == null) // Key does not exist
@@ -343,6 +392,8 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 		if (node.isLeaf()) {
 			if (this.size == 0) { // If it's an only node
 				this.root = null;
+				this.max = null;
+				this.min = null;
 			}
 			else {
 				IAVLNode vir_node = new AVLNode((AVLNode) parent);
@@ -437,15 +488,9 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * Returns the info of the item with the smallest key in the tree,
 	 * or null if the tree is empty.
 	 */
+	// COMPLEXITY O(1)
 	public String min() {
-		if (this.size == 0) {
-			return null;
-		}
-		AVLNode curr = this.root;
-		while (curr.left.rank != -1) {
-			curr = curr.left;
-		}
-		return curr.info;
+		return min.info;
 	}
 
 	/**
@@ -454,15 +499,9 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * Returns the info of the item with the largest key in the tree,
 	 * or null if the tree is empty.
 	 */
+	// COMPLEXITY O(1)
 	public String max() {
-		if (this.size == 0) {
-			return null;
-		}
-		AVLNode curr = this.root;
-		while (curr.right.rank != -1) {
-			curr = curr.right;
-		}
-		return curr.info;
+		return max.info;
 	}
 
 	/**
@@ -471,6 +510,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * Returns a sorted array which contains all keys in the tree,
 	 * or an empty array if the tree is empty.
 	 */
+	// COMPLEXITY O(n)
 	public int[] keysToArray() {
 		int[] keys = new int[this.size];
 		int i = 0;
@@ -487,6 +527,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * sorted by their respective keys,
 	 * or an empty array if the tree is empty.
 	 */
+	// COMPLEXITY O(n)
 	public String[] infoToArray() {
 		if (this.size == 0) {
 			return new String[0];
@@ -504,6 +545,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * <p>
 	 * Returns the number of nodes in the tree.
 	 */
+	// COMPLEXITY O(1)
 	public int size() {
 		return this.size;
 	}
@@ -513,6 +555,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * <p>
 	 * Returns the root AVL node, or null if the tree is empty
 	 */
+	// COMPLEXITY O(1)
 	public IAVLNode getRoot() {
 		return this.root;
 	}
@@ -526,6 +569,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * precondition: search(x) != null (i.e. you can also assume that the tree is not empty)
 	 * postcondition: none
 	 */
+	// COMPLEXITY O(log n)
 	public AVLTree[] split(int x) {
 
 		AVLTree[] splitted = new AVLTree[2];
@@ -541,12 +585,15 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 			if (t.getKey() > x) { // insert the node and his right sub_tree to big keys array
 				big++;
 				bigger_key_nodes[big] = t;
+				bigger_key_nodes[big].setHeight(0);
 				bigger_key_trees[big] = new AVLTree((AVLNode) t.disconnectRight());
 				t = t.disconnectLeft(); // disconnect the connection between the node and it's sons
+				bigger_key_nodes[big].setHeight(0);
 			}
 			else { // insert the node and his left sub_tree to small keys array
 				small++;
 				smaller_key_nodes[small] = t;
+				smaller_key_nodes[small].setHeight(0);
 				smaller_key_trees[small] = new AVLTree((AVLNode) t.disconnectLeft());
 				t = t.disconnectRight(); // disconnect the connection between the node and it's sons
 			}
@@ -579,6 +626,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 * precondition: keys(t) < x < keys() or keys(t) > x > keys(). t/tree might be empty (rank = -1).
 	 * postcondition: none
 	 */
+	// COMPLEXITY O(log n)
 	public int join(IAVLNode x, AVLTree t) {
 		if (x == null){ // sanity check
 			return -1;
@@ -586,17 +634,19 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 
 		// If one of the trees is empty
 		if(t.size == 0 && this.size == 0){
-			this.insert(x.getKey(), x.getValue());
+			insertNode(x);
 			return 1;
 		}
 		if(t.size == 0){
-			this.insert(x.getKey(), x.getValue());
+			this.insertNode(x);
 			return Math.abs(this.root.rank - (-1)) + 1;
 		}
 		if (this.size == 0){
-			t.insert(x.getKey(), x.getValue());
+			t.insertNode(x);
 			this.root = t.root;
 			this.size = t.size;
+			this.max = t.max;
+			this.min = t.min;
 			return Math.abs((-1) - t.root.rank) + 1;
 		}
 
@@ -621,6 +671,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 			this.root.setRight(biggerKeyTree);
 			this.root.setHeight(k1 + 1);
 			this.root.updateSize();
+			this.updateMinMax();
 		}
 
 		else if(k1 < k2){
@@ -663,79 +714,26 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 		return Math.abs(k1 - k2) + 1;
 	}
 
-	//prints the tree level by level until the last virtual node
-	// V - virtual node
-	//N - null
-	public void treePrinter() {
-		ArrayList<IAVLNode> currList = new ArrayList<>();
-		currList.add(root);
-		int level = root.getHeight();
-
-		while (currList.size() > 0) {
-
-			String space = "  ";
-
-			for (int i = 0; i < level; i++) {
-				space = space + space;
-			}
-			level--;
-			System.out.print(space);
-
-
-			ArrayList<IAVLNode> childrenList = new ArrayList<>();
-
-			for (IAVLNode node : currList) {
-				if (node != null && node.isRealNode()) {
-					System.out.print(node.getKey() + space);
-					childrenList.add(node.getLeft());
-					childrenList.add(node.getRight());
-				} else if (node != null) {
-					System.out.print("V");
-					System.out.print(space);
-					childrenList.add(null);
-					childrenList.add(null);
-
-				} else { //node == null
-					System.out.print("N");
-					System.out.print(space);
-
-					childrenList.add(null);
-					childrenList.add(null);
-				}
-
-			}
-			boolean onlyNull = true;
-
-			for (int i = 0; i < childrenList.size(); i++) {
-				if (childrenList.get(i) != null) {
-					onlyNull = false;
-					break;
-				}
-			}
-			if (onlyNull) {
-				break;
-			}
-			currList = childrenList;
-			childrenList = new ArrayList<>();
-
-			System.out.println();
-			System.out.println();
+	// COMPLEXITY O(log n)
+	public void updateMinMax(){
+		AVLNode minNode = root;
+		AVLNode maxNode = root;
+		while (minNode.getLeft().getHeight() != -1 || maxNode.getRight().getHeight() != -1){
+			minNode = minNode.getLeft().getHeight() != -1 ? (AVLNode) minNode.getLeft() : minNode;
+			maxNode = maxNode.getRight().getHeight() != -1 ? (AVLNode) maxNode.getRight() : maxNode;
 		}
+		min = minNode;
+		max = maxNode;
 	}
 
-	public void print() {
-		if (this.size == 0){ System.out.println("tree is empty"); return; }
-		this.treePrinter();
-		System.out.println();
-		System.out.println();
-		System.out.println("tree size: " + this.size);
-		System.out.println();
-		for (IAVLNode node : this) {
-			System.out.print("| " + node + ", rank: " + node.getHeight() + ", size: "+ node.getSize() +" |");
-		}
-		System.out.println();
-		System.out.println();
-		System.out.println();
+	// COMPLEXITY O(1)
+	public AVLNode getMax(){
+		return max;
+	}
+
+	// COMPLEXITY O(1)
+	public AVLNode getMin(){
+		return min;
 	}
 
 	@Override
@@ -749,47 +747,26 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 */
 	public interface IAVLNode {
 		public int getKey(); // Returns node's key (for virtual node return -1).
-
 		public String getValue(); // Returns node's value [info], for virtual node returns null.
-
 		public void setLeft(IAVLNode node); // Sets left child.
-
 		public IAVLNode getLeft(); // Returns left child, if there is no left child returns null.
-
 		public void setRight(IAVLNode node); // Sets right child.
-
 		public IAVLNode getRight(); // Returns right child, if there is no right child return null.
-
 		public void setParent(IAVLNode node); // Sets parent.
-
 		public IAVLNode getParent(); // Returns the parent, if there is no parent return null.
-
 		public boolean isRealNode(); // Returns True if this is a non-virtual AVL node.
-
 		public void setHeight(int height); // Sets the height of the node.
-
 		public int getHeight(); // Returns the height of the node (-1 for virtual nodes).
-
 		public int getLeftDiff();
-
 		public int getRightDiff();
-
 		public boolean isLeaf();
-
 		public int isUnary();
-
 		public void promote();
-
 		public void demote();
-
 		public int position();
-
 		public int getSize();
-
 		public int updateSize();
-
 		public IAVLNode disconnectRight();
-
 		public IAVLNode disconnectLeft();
 	}
 
@@ -806,6 +783,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 		private String info;
 		private AVLNode left, parent, right;
 
+		// Virtual Node Builder. COMPLEXITY O(1)
 		private AVLNode(AVLNode parent) {
 			this.key = -1;
 			this.info = null;
@@ -814,6 +792,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 			size = 0;
 		}
 
+		// COMPLEXITY O(1)
 		public AVLNode(int key, String info) {
 			this.info = info;
 			this.key = key;
@@ -823,66 +802,81 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 			this.right = new AVLNode(this);
 		}
 
+		// COMPLEXITY O(1)
 		public int getKey() {
 			return this.key;
 		}
 
+		// COMPLEXITY O(1)
 		public String getValue() {
 			return this.info;
 		}
 
+		// COMPLEXITY O(1)
 		public void setLeft(IAVLNode node) // this also changes this parent of node
 		{
 			this.left = (AVLNode) node;
 			((AVLNode) node).parent = this;
 		}
 
+		// COMPLEXITY O(1)
 		public IAVLNode getLeft() {
 			return this.left;
 		}
 
+		// COMPLEXITY O(1)
 		public void setRight(IAVLNode node) // this also changes this parent of node
 		{
 			this.right = (AVLNode) node;
 			((AVLNode) node).parent = this;
 		}
 
+		// COMPLEXITY O(1)
 		public IAVLNode getRight() {
 			return this.right;
 		}
 
+		// COMPLEXITY O(1)
 		public void setParent(IAVLNode node) {
 			this.parent = (AVLNode) node;
 		}
 
+		// COMPLEXITY O(1)
 		public IAVLNode getParent() {
 			return this.parent;
 		}
 
+		// COMPLEXITY O(1)
 		public boolean isRealNode() {
 			return this.rank != -1;
 		}
 
+		// COMPLEXITY O(1)
 		public void setHeight(int height) {
 			this.rank = height;
 		}
 
+		// COMPLEXITY O(1)
 		public int getHeight() {
 			return this.rank;
 		}
 
+		// COMPLEXITY O(1)
 		public int getLeftDiff() {
 			return this.rank - this.left.rank;
 		}
 
+		// COMPLEXITY O(1)
 		public int getRightDiff() {
 			return this.rank - this.right.rank;
 		}
 
+		// COMPLEXITY O(1)
 		public boolean isLeaf() {
 			return this.left.rank == -1 && this.right.rank == -1;
 		}
 
+		// COMPLEXITY O(1)
 		public int isUnary() { // 0 - left subtree, 1 - right subtree, else - (-1)
 			if (this.left.rank == -1 && this.right.rank != -1) {
 				return 1;
@@ -892,18 +886,23 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 			} else return -1;
 		}
 
+		// COMPLEXITY O(1)
 		public void promote() {
 			this.rank += 1;
 		}
 
+		// COMPLEXITY O(1)
 		public void demote() {
 			this.rank -= 1;
 		}
 
+		// COMPLEXITY O(1)
 		public String toString() {
 			return "key: " + this.key;
 		}
 
+		// COMPLEXITY O(1)
+		// return -1 if it's a root, 0 if it's a left son, 1 if right son
 		public int position() {
 			if (this.parent == null)
 				return -1;
@@ -912,11 +911,13 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 			return 0;
 		}
 
+		// COMPLEXITY O(1)
 		@Override
 		public int getSize() {
 			return size;
 		}
 
+		// COMPLEXITY O(1)
 		@Override
 		public int updateSize() {
 			this.size = 1 + left.size + right.size;
@@ -927,6 +928,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 		 * disconnect between node and his right son and return the right son
 		 * @return @pre this.right
 		 */
+		// COMPLEXITY O(1)
 		public IAVLNode disconnectRight(){
 			IAVLNode temp = this.right;
 			this.right = new AVLNode(this);
@@ -939,6 +941,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 		 * disconnect between node and his left son and return the left son
 		 * @return @pre this.left
 		 */
+		// COMPLEXITY O(1)
 		public IAVLNode disconnectLeft(){
 			IAVLNode temp = this.left;
 			this.left = new AVLNode(this);
@@ -953,6 +956,10 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 		private IAVLNode curr;
 
 		public TreeIterator(AVLTree tree) {
+			if (tree.size == 0){
+				curr = null;
+				return;
+			}
 			curr = tree.root;
 			while (curr.getLeft().getHeight() != -1 && curr != null) {
 				curr = curr.getLeft();

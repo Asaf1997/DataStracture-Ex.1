@@ -1,6 +1,9 @@
 package src;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 public class tester {
     public static void main(String[] args) {
@@ -22,30 +25,42 @@ public class tester {
          **/
     }
 
+    public static int numOf(Integer[] a){
+        int counter = 0;
+        for (int i = 0 ; i < a.length ; i++){
+            for (int j = i + 1 ; j < a.length ; j++){
+                if (a[i] > a[j]){
+                    counter ++;
+                }
+            }
+        }
+        return counter;
+    }
+
+    public static int insertThisShitToATree(Integer[] a){
+        int counter = 0;
+        FingerTree t = new FingerTree();
+        for (int i = 0 ; i < a.length ; i++){
+            counter += t.insert(a[i], "");
+        }
+        return counter;
+    }
+
     public static void asafTest(){
-        /**
+
+/**
         AVLTree t1 = new AVLTree();
-        AVLTree.AVLNode a1 = new AVLTree.AVLNode(1, "1");
-        AVLTree.AVLNode a2 = new AVLTree.AVLNode(2, "2");
-        AVLTree.AVLNode a3 = new AVLTree.AVLNode(3, "3");
-        AVLTree.AVLNode a4 = new AVLTree.AVLNode(4, "4");
-        AVLTree.AVLNode a5 = new AVLTree.AVLNode(5, "5");
-        AVLTree.AVLNode a6 = new AVLTree.AVLNode(6, "6");
-        AVLTree.AVLNode a7 = new AVLTree.AVLNode(7, "7");
-
-        a2.setLeft(a1);
-        a2.setRight(a3);
-        a6.setLeft(a5);
-        a6.setRight(a7);
-        a4.setLeft(a2);
-        a4.setRight(a6);
-
-        t1.root = a4;
+        for (int i=1 ; i <= 10 ; i++){
+            t1.insert(i, "");
+        }
         t1.print();
 
-        t1.rotateLeft(t1.root);
-        t1.print();
+        AVLTree[] aaa = t1.split(5);
+
+        aaa[0].print();
+        aaa[1].print();
 **/
+
 /**
         AVLTree t2 = new AVLTree();
         t2.insert(14,"14");
@@ -72,6 +87,38 @@ public class tester {
         aa[1].print();
        **/
 
-    }
+/**
+        for (int i = 1 ; i <= 5 ; i++){
+            int c = (int) (1000 * Math.pow(2,i));
+            System.out.println("i = "+ i + ", c = "+ c);
+            Set<Integer> s = new HashSet<>();
+            Random r = new Random();
+            while (s.size() < c){
+                s.add(r.nextInt(10*c)+1);
+            }
+            Integer[] a = s.toArray(new Integer[s.size()]);
+            System.out.println("num of shit = " + numOf(a));
+            System.out.println("cost of shit = " + insertThisShitToATree(a));
 
+            System.out.println();
+            System.out.println();
+        }
+**/
+/**
+        for (int i = 1 ; i <= 5 ; i++){
+            int c = (int) (1000 * Math.pow(2,i));
+            System.out.println("i = "+ i + ", c = "+ c);
+            Integer[] a = new Integer[c];
+            for (int p=0 ; p < c ; p++){
+                a[p] = c - p;
+            }
+
+            System.out.println("num of shit = " + numOf(a));
+            System.out.println("cost of shit = " + insertThisShitToATree(a));
+
+            System.out.println();
+            System.out.println();
+        }**/
+    }
 }
+
