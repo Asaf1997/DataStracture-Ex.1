@@ -490,7 +490,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 */
 	// COMPLEXITY O(1)
 	public String min() {
-		return min.info;
+		return this.empty() ? null : this.min.info;
 	}
 
 	/**
@@ -501,7 +501,7 @@ public class AVLTree implements Iterable<AVLTree.IAVLNode> {
 	 */
 	// COMPLEXITY O(1)
 	public String max() {
-		return max.info;
+		return this.empty() ? null : max.info;
 	}
 
 	/**
